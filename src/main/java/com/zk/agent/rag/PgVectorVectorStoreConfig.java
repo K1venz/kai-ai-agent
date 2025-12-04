@@ -22,7 +22,7 @@ public class PgVectorVectorStoreConfig {
 
     @Bean
     public VectorStore pgVectorVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel dashscopeEmbeddingModel) {
-        VectorStore vectorStore = PgVectorStore.builder(jdbcTemplate, dashscopeEmbeddingModel)
+        PgVectorStore vectorStore = PgVectorStore.builder(jdbcTemplate, dashscopeEmbeddingModel)
                 .dimensions(1536)                    // Optional: defaults to model dimensions or 1536
                 .distanceType(COSINE_DISTANCE)       // Optional: defaults to COSINE_DISTANCE
                 .indexType(HNSW)                     // Optional: defaults to HNSW

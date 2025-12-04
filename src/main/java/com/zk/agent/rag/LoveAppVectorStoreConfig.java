@@ -19,6 +19,7 @@ public class LoveAppVectorStoreConfig {
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
 
+    // 如果不需要的话可以先注释掉，因为在启动的时候会自动加载
     @Bean
     VectorStore loveAppVectorStore(EmbeddingModel dashscopeEmbeddingModel) {// 注入向量模型
         SimpleVectorStore simpleVectorStore = SimpleVectorStore.builder(dashscopeEmbeddingModel)// 构建向量数据库

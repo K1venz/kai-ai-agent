@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-parent</artifactId>
+        <version>1.0.0-beta2</version>
+        <relativePath></relativePath>
+    </parent>
+
+    <artifactId>langchain4j-community</artifactId>
+    <packaging>pom</packaging>
+
+    <name>LangChain4j :: Community</name>
+    <description>Parent POM for langchain4j-community submodules</description>
+    <url>https://github.com/langchain4j/langchain4j-community</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>deep-learning-dynamo</id>
+            <email>deeplearningdynamo@gmail.com</email>
+            <url>https://github.com/deep-learning-dynamo</url>
+        </developer>
+        <developer>
+            <id>kuraleta</id>
+            <email>digital.kuraleta@gmail.com</email>
+            <url>https://github.com/kuraleta</url>
+        </developer>
+        <developer>
+            <id>Martin7-1</id>
+            <email>yi.zheng.se@gmail.com</email>
+            <url>https://github.com/Martin7-1</url>
+        </developer>
+    </developers>
+
+    <modules>
+
+        <!-- LangChain4j Community Bill of Materials POM -->
+        <module>langchain4j-community-bom</module>
+
+        <!-- Integration of models -->
+        <module>models/langchain4j-community-chatglm</module>
+        <module>models/langchain4j-community-dashscope</module>
+        <module>models/langchain4j-community-qianfan</module>
+        <module>models/langchain4j-community-xinference</module>
+        <module>models/langchain4j-community-zhipu-ai</module>
+
+        <!-- Integration of embedding store -->
+        <module>embedding-stores/langchain4j-community-clickhouse</module>
+        <module>embedding-stores/langchain4j-community-duckdb</module>
+        <module>embedding-stores/langchain4j-community-redis</module>
+        <module>embedding-stores/langchain4j-community-vearch</module>
+
+        <!-- Integration of content retrievers -->
+        <module>content-retrievers/langchain4j-community-lucene</module>
+
+        <!-- Integration of web search engine -->
+        <module>web-search-engines/langchain4j-community-web-search-engine-searxng</module>
+
+        <!-- Spring Boot Starters -->
+        <module>spring-boot-starters</module>
+
+    </modules>
+
+    <scm>
+        <connection>scm:git:git://github.com/langchain4j/langchain4j-community.git</connection>
+        <developerConnection>scm:git:git@github.com:langchain4j/langchain4j-community.git</developerConnection>
+        <url>https://github.com/langchain4j/langchain4j-community</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <gib.disable>true</gib.disable>
+    </properties>
+
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>ossrh-snapshots</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <configuration>
+                    <ratchetFrom>origin/main</ratchetFrom>
+                    <pom>
+                        <sortPom>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                        </sortPom>
+                    </pom>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>detect-unused-dependencies</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <ignoredUsedUndeclaredDependencies>true</ignoredUsedUndeclaredDependencies>
+                            <!-- todo: fix dependencies and set to true -->
+                            <failOnWarning>false</failOnWarning>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>analyze-all</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration combine.children="append">
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                    <systemPropertyVariables>
+                        <tinylog.level>info</tinylog.level>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- failsafe will be in charge of running the integration tests (everything that ends in IT) -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration combine.children="append">
+                    <systemPropertyVariables>
+                        <tinylog.level>info</tinylog.level>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <banDuplicatePomDependencyVersions></banDuplicatePomDependencyVersions>
+                                <dependencyConvergence></dependencyConvergence>
+                                <requireMavenVersion>
+                                    <version>3.8</version>
+                                </requireMavenVersion>
+                                <requireUpperBoundDeps></requireUpperBoundDeps>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>com.vackosar.gitflowincrementalbuilder</groupId>
+                <artifactId>gitflow-incremental-builder</artifactId>
+                <version>3.15.0</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                        <inherited>false</inherited>
+                    </reportSet>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>openrewrite</id>
+            <!-- `mvn -P openrewrite org.openrewrite.maven:rewrite-maven-plugin:run` -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openrewrite.maven</groupId>
+                        <artifactId>rewrite-maven-plugin</artifactId>
+                        <version>5.23.1</version>
+                        <configuration>
+                            <activeRecipes>
+                                <!--<recipe>org.openrewrite.java.OrderImports</recipe>-->
+                                <recipe>org.openrewrite.java.testing.assertj.Assertj</recipe>
+                            </activeRecipes>
+                            <failOnDryRunResults>true</failOnDryRunResults>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.openrewrite.recipe</groupId>
+                                <artifactId>rewrite-testing-frameworks</artifactId>
+                                <version>2.4.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

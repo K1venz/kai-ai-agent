@@ -33,9 +33,17 @@ public class LoveApp {
             "恋爱状态询问沟通、习惯差异引发的矛盾；已婚状态询问家庭责任与亲属关系处理的问题。" +
             "引导用户详述事情经过、对方反应及自身想法，以便给出专属解决方案。";
 
+    // 定义一个记录类
     record LoveReport(String title, List<String> suggestions) {
     }
 
+    /**
+     * AI 恋爱报告功能（实战结构化输出）
+     *
+     * @param message
+     * @param chatId
+     * @return
+     */
     public LoveReport doChatWithReport(String message, String chatId) {
         LoveReport loveReport = chatClient
                 .prompt()
@@ -93,15 +101,15 @@ public class LoveApp {
         ChatResponse chatResponse = chatClient.prompt()
                 .user(message)
                 .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
-                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 5))
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
                 // 开启日志，便于观察效果
                 .advisors(new MyLoggerAdvisor())
                 // 应用 RAG 知识库问答
 //                .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
                 // 应用 RAG 检索增强服务(基于云知识库服务)
-//                .advisors(loveAppRagCloudAdvisor)
+                .advisors(loveAppRagCloudAdvisor)
                 // 应用 RAG 检索增强服务(基于 PGVector 向量存储)
-                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+//                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
                 .call()
                 .chatResponse();
 
